@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:medicine_reminder/l10n/locales/l10n.dart';
 import 'package:medicine_reminder/screen/settings/settings_notifier.dart';
 import 'package:provider/provider.dart';
