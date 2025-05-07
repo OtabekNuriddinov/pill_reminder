@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
-import '../../../core/theme/colors.dart';
+import '../../../core/theme/themes.dart';
 
 class PanelTitle extends StatelessWidget {
   final String title;
@@ -21,12 +21,17 @@ class PanelTitle extends StatelessWidget {
           children: <TextSpan>[
             TextSpan(
               text: title,
-              style: Theme.of(context).textTheme.labelMedium,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 14.sp,
+              ),
             ),
             TextSpan(
               text: isRequired ? " *" : "",
               style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                color: AppColors.kPrimaryColor,
+                color: Colors.amber.shade300,
+                fontWeight: FontWeight.bold,
               ),
             )
           ],

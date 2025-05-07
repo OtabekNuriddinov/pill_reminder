@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
-import '../theme/colors.dart';
+import '../theme/themes.dart';
 
 sealed class AppDialog {
   static Future<dynamic> showMyDialog({
@@ -16,7 +16,7 @@ sealed class AppDialog {
         context: context,
         builder: (context) {
           return AlertDialog(
-            backgroundColor: AppColors.kScaffoldColor,
+            backgroundColor: Themes.kLightScaffoldColor,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(20.0),
@@ -39,7 +39,7 @@ sealed class AppDialog {
                       style: Theme.of(context)
                           .textTheme
                           .headlineSmall!
-                          .copyWith(color: AppColors.kTextLightColor),
+                          .copyWith(color: Themes.kTextLightColor),
                     ),
                   )),
                   SizedBox(width: 5),
@@ -51,7 +51,7 @@ sealed class AppDialog {
                       style: Theme.of(context)
                           .textTheme
                           .headlineSmall!
-                          .copyWith(color: AppColors.kSecondaryColor),
+                          .copyWith(color: Themes.kSecondaryColor),
                     ),
                   )),
                 ],

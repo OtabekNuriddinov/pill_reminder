@@ -15,16 +15,16 @@ class Medicine {
     required this.startTime,
   });
 
-  String get getName => medicineName!;
-  String get getDosage => dosage!;
-  String get getType => medicineType!;
-  int get getInterval => interval!;
-  String get getStartTime => startTime!;
-  List<dynamic> get getIDs => notificationIDs!;
+  String get getName => medicineName ?? "";
+  String get getDosage => dosage ?? "";
+  String get getType => medicineType ?? "";
+  int get getInterval => interval ?? 0;
+  String get getStartTime => startTime ?? "";
+  List<dynamic> get getIDs => notificationIDs ?? [];
 
   factory Medicine.fromJson(Map<String, dynamic>json){
     return Medicine(
-      notificationIDs: List.from(json['notificationIDs']),
+      notificationIDs: json['notificationIDs'] != null ?List.from(json['notificationIDs']):[],
       medicineName: json['medicineName'],
       dosage: json['dosage'],
       medicineType: json['medicineType'],
@@ -35,7 +35,7 @@ class Medicine {
 
   Map<String, dynamic> toJson(){
     return {
-      "notificationIDs": notificationIDs,
+      "notificationIDs": notificationIDs ?? [],
       "medicineName": medicineName,
       "dosage": dosage,
       "medicineType": medicineType,

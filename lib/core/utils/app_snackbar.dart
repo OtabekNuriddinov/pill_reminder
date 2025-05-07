@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/colors.dart';
+import '../theme/themes.dart';
 
 sealed class AppSnackbar {
   static void msg(BuildContext context, String message) {
@@ -11,7 +11,7 @@ sealed class AppSnackbar {
             message,
             style: Theme.of(context).textTheme.labelSmall,
           ),
-          backgroundColor: AppColors.kOtherColor,
+          backgroundColor: Themes.kOtherColor,
         ),
       );
   }

@@ -1,16 +1,20 @@
 import 'dart:math';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:medicine_reminder/l10n/locales/l10n.dart';
+import 'package:medicine_reminder/screen/settings/settings_notifier.dart';
+import 'package:medicine_reminder/screen/settings/settings_screen.dart';
 import 'package:provider/provider.dart';
 import '../../core/models/errors.dart';
 import '../../core/models/medicine.dart';
 import '../../core/models/medicine_type.dart';
 import '../../core/utils/app_snackbar.dart';
 import '../../medicine_notifier.dart';
-import '../ai/presentation/ai_screen.dart';
+import '../ai/ai_screen.dart';
 import '../success/sucess_screen.dart';
-import '/core/theme/colors.dart';
+import '/core/theme/themes.dart';
 import 'package:sizer/sizer.dart';
 
 import 'components/interval_selection.dart';
@@ -43,237 +47,386 @@ class _NewEntryScreenState extends State<NewEntryScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     nameController.dispose();
     dosageController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: Text(
-          "Add New",
-          style: Theme.of(context)
-              .textTheme
-              .headlineLarge!
-              .copyWith(fontSize: 18.sp),
-        ),
-        centerTitle: true,
-        iconTheme: IconThemeData(
-          color: AppColors.kOtherColor,
-        ),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AIScreen(),
-                  ),
-                );
-              },
-              icon: FaIcon(FontAwesomeIcons.brain)),
-          IconButton(onPressed: () {}, icon: FaIcon(FontAwesomeIcons.gear))
-        ],
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(2.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            PanelTitle(
-              title: "Medicine Name",
-              isRequired: true,
-            ),
-            TextFormField(
-              controller: nameController,
-              maxLength: 12,
-              textCapitalization: TextCapitalization.words,
-              decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-              ),
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineSmall!
-                  .copyWith(color: AppColors.kOtherColor),
-            ),
-            PanelTitle(
-              title: "Dosage in msg",
-              isRequired: false,
-            ),
-            TextFormField(
-              controller: dosageController,
-              maxLength: 12,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-              ),
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineSmall!
-                  .copyWith(color: AppColors.kOtherColor),
-            ),
-            SizedBox(height: 2.h),
-            PanelTitle(
-              title: "Medicine Type",
-              isRequired: false,
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 1.h),
-              child: Consumer<NewEntryNotifier>(
-                builder: (context, newEntryNotifier, __) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      MedicineTypeColumn(
-                          medicineType: MedicineType.bottle,
-                          name: "Bottle",
-                          iconValue: "assets/icons/pill_bottle.svg",
-                          isSelected: newEntryNotifier.selectedMedicineType ==
-                              MedicineType.bottle),
-                      MedicineTypeColumn(
-                          medicineType: MedicineType.pill,
-                          name: "Pill",
-                          iconValue: "assets/icons/pill.svg",
-                          isSelected: newEntryNotifier.selectedMedicineType ==
-                              MedicineType.pill),
-                      MedicineTypeColumn(
-                          medicineType: MedicineType.syringe,
-                          name: "Syringe",
-                          iconValue: "assets/icons/syringe.svg",
-                          isSelected: newEntryNotifier.selectedMedicineType ==
-                              MedicineType.syringe),
-                      MedicineTypeColumn(
-                          medicineType: MedicineType.tablet,
-                          name: "Tablet",
-                          iconValue: "assets/icons/tablet.svg",
-                          isSelected: newEntryNotifier.selectedMedicineType ==
-                              MedicineType.tablet),
-                    ],
-                  );
-                },
+    return Consumer<SettingsNotifier>(
+      builder: (context, settingsProvider, child) {
+        Color scaffoldColor = settingsProvider.isDarkMode
+            ? Themes.kDarkScaffoldColor
+            : Themes.kLightScaffoldColor;
+
+        Color primaryColor = settingsProvider.isDarkMode
+            ? Themes.kDarkPrimaryColor
+            : Themes.kLightPrimaryColor;
+
+        return Scaffold(
+          key: _scaffoldKey,
+          backgroundColor: scaffoldColor,
+          resizeToAvoidBottomInset: false,
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            title: Text(
+              context.l10n.addNew,
+              style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                fontSize: 18.sp,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            PanelTitle(
-              title: "Interval selection",
-              isRequired: true,
-            ),
-            IntervalSelection(),
-            PanelTitle(
-              title: "Starting time",
-              isRequired: true,
-            ),
-            const SelectTime(),
-            SizedBox(height: 2.h),
-            Padding(
-              padding: EdgeInsets.only(
-                left: 8.w,
-                right: 8.w,
-              ),
-              child: SizedBox(
-                width: 80.w,
-                height: 8.h,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: AppColors.kPrimaryColor,
-                    shape: StadiumBorder(),
-                  ),
+            centerTitle: true,
+            iconTheme: IconThemeData(color: Colors.white),
+            actions: [
+              Container(
+                margin: EdgeInsets.only(right: 1.w),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: primaryColor.withOpacity(0.2),
+                ),
+                child: IconButton(
                   onPressed: () {
-                    /// Adding
-                    final medicineName = nameController.text;
-                    final dosage = dosageController.text;
-
-                    final newEntry =
-                        Provider.of<NewEntryNotifier>(context, listen: false);
-                    final medicineProvider =
-                        Provider.of<MedicineNotifier>(context, listen: false);
-
-                    if (medicineName.trim().isEmpty || dosage.trim().isEmpty) {
-                      newEntry.submitError(EntryErrors.emptyFields);
-                      AppSnackbar.msg(context, "Please fill all the gaps!");
-                      return;
-                    }
-
-                    for (var medicine in medicineProvider.medicines) {
-                      if (medicineName == medicine.medicineName) {
-                        newEntry.submitError(EntryErrors.nameDuplicate);
-                        AppSnackbar.msg(
-                            context, "This medicine already exists!");
-                        return;
-                      }
-                    }
-
-                    if (newEntry.selectedInterval == 0) {
-                      newEntry.submitError(EntryErrors.interval);
-                      AppSnackbar.msg(context, "Please select interval!");
-                      return;
-                    }
-
-                    if (newEntry.selectedTimeOfDay == null ||
-                        newEntry.selectedTimeOfDay == "None") {
-                      AppSnackbar.msg(
-                          context, "Please select Starting time!");
-                      return;
-                    }
-
-                    String medicineType =
-                        newEntry.selectedMedicineType.toString().substring(13);
-
-                    int interval = newEntry.selectedInterval;
-                    String startTime = newEntry.selectedTimeOfDay!;
-
-                    List<int> intIDs = makeIDs(24 / newEntry.selectedInterval);
-
-                    List<String> notificationIDs =
-                        intIDs.map((i) => i.toString()).toList();
-
-                    Medicine newMedicine = Medicine(
-                      notificationIDs: notificationIDs,
-                      medicineName: medicineName,
-                      dosage: dosage,
-                      medicineType: medicineType,
-                      interval: interval,
-                      startTime: startTime,
-                    );
-                    medicineProvider.addMedicine(newMedicine);
-
-                    nameController.clear();
-                    dosageController.clear();
-                    newEntry.reset();
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => SuccessScreen(),
-                      ),
+                      MaterialPageRoute(builder: (context) => AIScreen()),
                     );
                   },
-                  child: Center(
-                    child: Text(
-                      "Confirm",
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium!
-                          .copyWith(color: AppColors.kScaffoldColor),
+                  icon: FaIcon(FontAwesomeIcons.brain, color: Colors.white),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(right: 3.w),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: primaryColor.withOpacity(0.2),
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SettingsScreen()),
+                      );
+                    },
+                    icon: FaIcon(FontAwesomeIcons.gear, color: Colors.white),
+                  ),
+                ),
+              )
+            ],
+          ),
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [primaryColor, scaffoldColor],
+              ),
+            ),
+            child: ClipRRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                child: SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.all(2.h),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildGlassCard(
+                            context,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                PanelTitle(
+                                  title: context.l10n.medicineName,
+                                  isRequired: true,
+                                ),
+                                TextFormField(
+                                  controller: nameController,
+                                  maxLength: 12,
+                                  textCapitalization: TextCapitalization.words,
+                                  decoration: _inputDecoration(),
+                                  style: _textStyle(context),
+                                ),
+                                PanelTitle(
+                                  title: context.l10n.dosageInMsg,
+                                  isRequired: false,
+                                ),
+                                TextFormField(
+                                  controller: dosageController,
+                                  maxLength: 12,
+                                  keyboardType: TextInputType.number,
+                                  decoration: _inputDecoration(),
+                                  style: _textStyle(context),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 2.h),
+                          _buildGlassCard(
+                            context,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                PanelTitle(
+                                  title: context.l10n.medicineType,
+                                  isRequired: false,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(top: 1.h),
+                                  child: Consumer<NewEntryNotifier>(
+                                    builder: (context, newEntryNotifier, __) {
+                                      return Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          MedicineTypeColumn(
+                                              medicineType: MedicineType.bottle,
+                                              name: context.l10n.bottle,
+                                              iconValue:
+                                              "assets/icons/pill_bottle.svg",
+                                              isSelected:
+                                              newEntryNotifier.selectedMedicineType ==
+                                                  MedicineType.bottle),
+                                          MedicineTypeColumn(
+                                              medicineType: MedicineType.pill,
+                                              name: context.l10n.pill,
+                                              iconValue: "assets/icons/pill.svg",
+                                              isSelected:
+                                              newEntryNotifier.selectedMedicineType ==
+                                                  MedicineType.pill),
+                                          MedicineTypeColumn(
+                                              medicineType: MedicineType.syringe,
+                                              name: context.l10n.syringe,
+                                              iconValue:
+                                              "assets/icons/syringe.svg",
+                                              isSelected:
+                                              newEntryNotifier.selectedMedicineType ==
+                                                  MedicineType.syringe),
+                                          MedicineTypeColumn(
+                                              medicineType: MedicineType.tablet,
+                                              name: context.l10n.tablet,
+                                              iconValue:
+                                              "assets/icons/tablet.svg",
+                                              isSelected:
+                                              newEntryNotifier.selectedMedicineType ==
+                                                  MedicineType.tablet),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 2.h),
+                          _buildGlassCard(
+                            context,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                PanelTitle(
+                                  title: context.l10n.intervalSelection,
+                                  isRequired: true,
+                                ),
+                                IntervalSelection(),
+                                PanelTitle(
+                                  title: context.l10n.startingTime,
+                                  isRequired: true,
+                                ),
+                                const SelectTime(),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 3.h),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.w),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(5.h),
+                              child: BackdropFilter(
+                                filter:
+                                ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                                child: SizedBox(
+                                  width: 80.w,
+                                  height: 8.h,
+                                  child: TextButton(
+                                    style: TextButton.styleFrom(
+                                      backgroundColor:
+                                      primaryColor.withOpacity(0.3),
+                                      shape: StadiumBorder(
+                                        side: BorderSide(
+                                          color: Colors.white.withOpacity(0.5),
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      final medicineName =
+                                      nameController.text.trim();
+                                      final dosage =
+                                      dosageController.text.trim();
+                                      final newEntry =
+                                      Provider.of<NewEntryNotifier>(context,
+                                          listen: false);
+                                      final medicineProvider =
+                                      Provider.of<MedicineNotifier>(context,
+                                          listen: false);
+
+                                      if (medicineName.isEmpty ||
+                                          dosage.isEmpty) {
+                                        newEntry.submitError(
+                                            EntryErrors.emptyFields);
+                                        AppSnackbar.msg(
+                                            context, "${context.l10n.fillGaps}!");
+                                        return;
+                                      }
+
+                                      if (medicineProvider.medicines
+                                          .any((m) =>
+                                      m.medicineName == medicineName)) {
+                                        newEntry.submitError(
+                                            EntryErrors.nameDuplicate);
+                                        AppSnackbar.msg(context,
+                                            "${context.l10n.alreadyExists}!");
+                                        return;
+                                      }
+
+                                      if (newEntry.selectedInterval == 0) {
+                                        newEntry
+                                            .submitError(EntryErrors.interval);
+                                        AppSnackbar.msg(context,
+                                            "${context.l10n.selectInterval}!");
+                                        return;
+                                      }
+
+                                      if (newEntry.selectedTimeOfDay == null ||
+                                          newEntry.selectedTimeOfDay == "None") {
+                                        AppSnackbar.msg(context,
+                                            "${context.l10n.selectTime}!");
+                                        return;
+                                      }
+
+                                      String medicineType = newEntry
+                                          .selectedMedicineType
+                                          .toString()
+                                          .split('.')
+                                          .last;
+                                      int interval = newEntry.selectedInterval;
+                                      String startTime =
+                                      newEntry.selectedTimeOfDay!;
+
+                                      List<int> intIDs =
+                                      makeIDs(24 / interval);
+                                      List<String> notificationIDs =
+                                      intIDs.map((e) => e.toString()).toList();
+
+                                      medicineProvider.addMedicine(Medicine(
+                                        notificationIDs: notificationIDs,
+                                        medicineName: medicineName,
+                                        dosage: dosage,
+                                        medicineType: medicineType,
+                                        interval: interval,
+                                        startTime: startTime,
+                                      ));
+
+                                      nameController.clear();
+                                      dosageController.clear();
+                                      newEntry.reset();
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                            const SuccessScreen()),
+                                      );
+                                    },
+                                    child: Center(
+                                      child: Text(
+                                        context.l10n.confirm,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelMedium!
+                                            .copyWith(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            )
-          ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildGlassCard(BuildContext context, {required Widget child}) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(3.h),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+        child: Container(
+          padding: EdgeInsets.all(3.h),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.white.withOpacity(0.3),
+                Colors.white.withOpacity(0.1),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(3.h),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.2),
+              width: 1.5,
+            ),
+          ),
+          child: child,
         ),
       ),
     );
   }
 
+  TextStyle _textStyle(BuildContext context) {
+    return Theme.of(context).textTheme.headlineSmall!.copyWith(
+      color: Colors.white,
+    );
+  }
+
+  InputDecoration _inputDecoration() {
+    return InputDecoration(
+      border: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
+      ),
+      enabledBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.white.withOpacity(0.5)),
+      ),
+      focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.white),
+      ),
+      counterStyle: TextStyle(color: Colors.white70),
+    );
+  }
+
   List<int> makeIDs(double n) {
-    var rand = Random();
-    List<int> ids = [];
-    for (int i = 0; i < n; i++) {
-      ids.add(rand.nextInt(10000000));
-    }
-    return ids;
+    final rand = Random();
+    return List.generate(n.toInt(), (_) => rand.nextInt(10000000));
   }
 }

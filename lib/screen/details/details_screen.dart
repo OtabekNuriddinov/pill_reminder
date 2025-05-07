@@ -1,13 +1,16 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:medicine_reminder/l10n/locales/l10n.dart';
+import 'package:medicine_reminder/screen/home/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../core/models/medicine.dart';
-import '../../core/models/medicine_type.dart';
-import '../../core/theme/colors.dart';
-import '../../core/utils/alert_dialog.dart';
 import '../../medicine_notifier.dart';
+import '../settings/settings_screen.dart';
+import 'components/broadened_section/breadened_section.dart';
+import 'components/main_section/main_section.dart';
 
 class DetailsScreen extends StatelessWidget {
   final Medicine medicine;
@@ -18,240 +21,286 @@ class DetailsScreen extends StatelessWidget {
     final MedicineNotifier medicineNotifier =
         Provider.of<MedicineNotifier>(context);
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: Text(
-          "Details",
-          style: Theme.of(context)
-              .textTheme
-              .headlineLarge!
-              .copyWith(fontSize: 18.sp),
+          context.l10n.details,
+          style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                fontSize: 18.sp,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
         ),
         centerTitle: true,
         iconTheme: IconThemeData(
-          color: AppColors.kOtherColor,
+          color: Colors.white,
         ),
-      ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 2.h, vertical: 4.h),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            MainSection(medicine),
-            BroadenedInfoSection(medicine: medicine),
-            Spacer(),
-            SizedBox(
-              width: 100.w,
-              height: 7.h,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.kSecondaryColor,
-                    shape: const StadiumBorder()),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 3.w),
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(0.2),
+              ),
+              child: IconButton(
                 onPressed: () {
-                  AppDialog.showMyDialog(
-                    context: context,
-                    mainText: "Delete Reminder?",
-                    leftButText: "cancel",
-                    rightButText: "ok",
-                    pressLeft: () {
-                      Navigator.pop(context);
-                    },
-                    pressRight: () {
-                      int index = medicineNotifier.medicines.indexOf(medicine);
-                      medicineNotifier.deleteMedicine(index);
-                      Navigator.popUntil(context, ModalRoute.withName("/"));
-                    },
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingsScreen()),
                   );
                 },
-                child: Center(
-                  child: Text(
-                    "delete",
-                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                          color: AppColors.kScaffoldColor,
+                icon: FaIcon(FontAwesomeIcons.gear, color: Colors.white),
+              ),
+            ),
+          )
+        ],
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFF6A11CB),
+              Color(0xFF2575FC),
+            ],
+          ),
+        ),
+        child: ClipRRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+            child: SafeArea(
+              child: Padding(
+                padding: EdgeInsets.all(2.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Main Section with Medicine Name and Dosage
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(3.h),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                        child: Container(
+                          padding: EdgeInsets.all(3.h),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.white.withOpacity(0.3),
+                                Colors.white.withOpacity(0.1),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(3.h),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.2),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: MainSection(medicine),
                         ),
+                      ),
+                    ),
+
+                    SizedBox(height: 2.h),
+
+                    // Broadened Info Section
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(3.h),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                        child: Container(
+                          padding: EdgeInsets.all(3.h),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                Colors.white.withOpacity(0.3),
+                                Colors.white.withOpacity(0.1),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(3.h),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.2),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: BroadenedInfoSection(medicine: medicine),
+                        ),
+                      ),
+                    ),
+
+                    Spacer(),
+
+                    // Delete Button
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 8.w,
+                        right: 8.w,
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(5.h),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                          child: SizedBox(
+                            width: 80.w,
+                            height: 8.h,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.white.withOpacity(0.3),
+                                shape: StadiumBorder(
+                                  side: BorderSide(
+                                    color: Colors.white.withOpacity(0.5),
+                                    width: 1.5,
+                                  ),
+                                ),
+                              ),
+                              onPressed: () {
+                                showDeleteDialog(context, medicineNotifier);
+                              },
+                              child: Center(
+                                child: Text(
+                                  context.l10n.delete,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium!
+                                      .copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.sp,
+                                      ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 2.h)
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void showDeleteDialog(
+      BuildContext context, MedicineNotifier medicineNotifier) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: Dialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(2.h),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  padding: EdgeInsets.all(3.h),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.white.withOpacity(0.4),
+                        Colors.white.withOpacity(0.2),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(2.h),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.2),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "${context.l10n.deleteReminder}?",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 3.h),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          TextButton(
+                            style: TextButton.styleFrom(
+                              backgroundColor: Colors.white.withOpacity(0.3),
+                              shape: StadiumBorder(
+                                side: BorderSide(
+                                  color: Colors.white.withOpacity(0.5),
+                                  width: 1.5,
+                                ),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 4.w, vertical: 1.h),
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text(
+                              context.l10n.cancel,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            style: TextButton.styleFrom(
+                              backgroundColor: Colors.red.withOpacity(0.3),
+                              shape: StadiumBorder(
+                                side: BorderSide(
+                                  color: Colors.red.withOpacity(0.5),
+                                  width: 1.5,
+                                ),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 4.w, vertical: 1.h),
+                            ),
+                            onPressed: () {
+                              int index =
+                                  medicineNotifier.medicines.indexOf(medicine);
+                              medicineNotifier.deleteMedicine(index);
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HomeScreen()),
+                                (route) => false,
+                              );
+                            },
+                            child: Text(
+                              context.l10n.ok,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 2.h)
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class MainSection extends StatelessWidget {
-  final Medicine medicine;
-  const MainSection(this.medicine, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        makeIcon(12.h),
-        SizedBox(width: 2.w),
-        Column(
-          children: [
-            Hero(
-              tag: medicine.medicineName!,
-              child: MainInfoTab(
-                fieldTitle: "Medicine Name",
-                fieldInfo: medicine.medicineName!,
-              ),
-            ),
-            MainInfoTab(
-              fieldTitle:"dosage",
-              fieldInfo: medicine.dosage == 0
-                  ? "not specific"
-                  : "${medicine.dosage} msg",
-            )
-          ],
-        ),
-      ],
-    );
-  }
-
-  Hero makeIcon(double size) {
-    final type = MedicineTypeExtension.fromString(medicine.medicineType ?? "");
-
-    String iconPath;
-    switch (type) {
-      case MedicineType.bottle:
-        iconPath = "assets/icons/bottle.svg";
-        break;
-      case MedicineType.pill:
-        iconPath = "assets/icons/pill.svg";
-        break;
-      case MedicineType.syringe:
-        iconPath = "assets/icons/syringe.svg";
-        break;
-      case MedicineType.tablet:
-        iconPath = "assets/icons/tablet.svg";
-        break;
-      default:
-        return Hero(
-          tag: medicine.medicineName! + (medicine.medicineType ?? ""),
-          child: Icon(Icons.error, color: AppColors.kPrimaryColor, size: size),
+          ),
         );
-    }
-
-    return Hero(
-      tag: medicine.medicineName! + (medicine.medicineType ?? ""),
-      child: SvgPicture.asset(
-        iconPath,
-        height: size,
-        colorFilter: ColorFilter.mode(
-          AppColors.kPrimaryColor,
-          BlendMode.srcIn,
-        ),
-      ),
-    );
-  }
-}
-
-class MainInfoTab extends StatelessWidget {
-  final String fieldTitle;
-  final String fieldInfo;
-  const MainInfoTab(
-      {super.key, required this.fieldTitle, required this.fieldInfo});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 40.w,
-      height: 10.h,
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              fieldTitle,
-              style: Theme.of(context)
-                  .textTheme
-                  .labelMedium!
-                  .copyWith(color: Colors.grey),
-            ),
-            SizedBox(height: 0.3.h),
-            Text(
-              fieldInfo,
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineMedium!
-                  .copyWith(fontSize: 18.sp, fontWeight: FontWeight.w900),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class BroadenedInfoSection extends StatelessWidget {
-  final Medicine medicine;
-  const BroadenedInfoSection({super.key, required this.medicine});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      shrinkWrap: true,
-      children: [
-        BroadenedInfoTab(
-          fieldTitle: "Medicine Type",
-          fieldInfo: medicine.medicineType == MedicineType.none
-              ? "not specific"
-              : "${medicine.medicineType}",
-        ),
-        BroadenedInfoTab(
-          fieldTitle: "dose interval",
-          fieldInfo:
-              "every ${medicine.interval} hours | ${medicine.interval == 24 ? "oneTimeADay" : "${(24 / medicine.interval!).floor()} times a day"}",
-        ),
-        BroadenedInfoTab(
-          fieldTitle: "Starting time",
-          fieldInfo: "${medicine.startTime}",
-        ),
-      ],
-    );
-  }
-}
-
-class BroadenedInfoTab extends StatelessWidget {
-  final String fieldTitle;
-  final String fieldInfo;
-  const BroadenedInfoTab({
-    super.key,
-    required this.fieldTitle,
-    required this.fieldInfo,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 2.h),
-      child: SizedBox(
-        width: 40.w,
-        height: 10.h,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(bottom: 1.h),
-              child: Text(
-                fieldTitle,
-                style: Theme.of(context).textTheme.labelMedium,
-              ),
-            ),
-            Text(
-              fieldInfo,
-              style: Theme.of(context)
-                  .textTheme
-                  .labelSmall!
-                  .copyWith(color: AppColors.kSecondaryColor),
-            )
-          ],
-        ),
-      ),
+      },
     );
   }
 }
