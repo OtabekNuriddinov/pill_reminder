@@ -42,5 +42,9 @@
   "appVersion": "Ilova Versiyasi",
   "privacy": "Maxfiylik siyosati",
   "termsOfUse": "Foydalanish shartlari",
-  "contactUs": "Biz bilan bog'laning"
+  "contactUs": "Biz bilan bog'laning",
+  "batterySaver": "Quvvat tejash",
+  "notifications": "Bildiririshnomalar",
+  "showNotification": "Bildirishnomalarni ko'rssatish",
+  "notificationSound": "Bildirishnomalar ovozi"
 }

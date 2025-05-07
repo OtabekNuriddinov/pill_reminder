@@ -42,5 +42,9 @@
   "appVersion": "App Version",
   "privacy": "Privacy Policy",
   "termsOfUse": "Terms of Use",
-  "contactUs": "Contact Us"
+  "contactUs": "Contact Us",
+  "batterySaver": "Battery Saver",
+  "notifications": "Notifications",
+  "showNotification": "Show notification",
+  "notificationSound": "Notification Sound"
 }

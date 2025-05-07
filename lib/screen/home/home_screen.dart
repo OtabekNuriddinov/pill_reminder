@@ -82,10 +82,12 @@ class HomeScreen extends StatelessWidget {
                 width: 1.5,
               ),
             ),
-            child: Icon(
-              Icons.add_outlined,
-              color: Colors.white,
-              size: 38.0.sp,
+            child: Center(
+              child: Icon(
+                Icons.add_outlined,
+                color: Colors.white,
+                size: 38.0.sp,
+              ),
             ),
           ),
         ),
