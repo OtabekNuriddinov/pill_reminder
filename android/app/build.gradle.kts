@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.reminder_medication.drug_reminder"
+    namespace = "com.reminder_medication.pill_reminder"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
@@ -22,7 +22,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.reminder_medication.drug_reminder"
+        applicationId = "com.reminder_medication.pill_reminder"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

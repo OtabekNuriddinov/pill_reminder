@@ -11,9 +11,9 @@ class NewsArticle {
 
   factory NewsArticle.fromJson(Map<String, dynamic> json){
     return NewsArticle(
-        title: json['title'],
-        description: json['description'],
-        urlToImage: json['urlToImage'],
+      title: json['title'] ?? 'No title available',
+      description: json['description'] ?? 'No description available',
+      urlToImage: json['urlToImage'] ?? 'https://via.placeholder.com/150',
     );
   }
 }
