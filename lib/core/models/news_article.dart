@@ -13,7 +13,7 @@ class NewsArticle {
     return NewsArticle(
       title: json['title'] ?? 'No title available',
       description: json['description'] ?? 'No description available',
-      urlToImage: json['urlToImage'] ?? 'https://via.placeholder.com/150',
+      urlToImage: json['urlToImage'] ?? '',
     );
   }
 }

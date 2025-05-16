@@ -23,7 +23,17 @@ class NewsService{
         return [];
       }
       List articles = data['articles'];
-      return articles.map((json)=>NewsArticle.fromJson(json)).toList();
+
+      List filtered = articles.where((article) {
+        return article['title'] != null &&
+            article['description'] != null &&
+            article['urlToImage'] != null &&
+            article['title'].toString().trim().isNotEmpty &&
+            article['description'].toString().trim().isNotEmpty &&
+            article['urlToImage'].toString().trim().isNotEmpty;
+      }).toList();
+
+      return filtered.map((json)=>NewsArticle.fromJson(json)).toList();
     }
     else{
       throw Exception('Failed to load news');
